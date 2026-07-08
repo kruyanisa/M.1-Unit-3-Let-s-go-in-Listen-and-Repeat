@@ -25,7 +25,6 @@
 
         .play-btn { width: 45px; height: 45px; border-radius: 50%; border: none; background: #3b82f6; color: white; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; box-shadow: 0 4px 0 #1d4ed8; }
         
-        /* ไฮไลท์ปุ่มกดเสียง */
         .play-btn:hover:not(:disabled) { transform: scale(1.1); background: #2563eb; box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
         .play-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #1d4ed8; }
         .play-btn.played { background: #10b981; box-shadow: 0 4px 0 #059669; }
@@ -44,7 +43,7 @@
         .modal-overlay.active { visibility: visible; opacity: 1; }
         .modal-box { background: white; padding: 25px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; border: 4px solid #ea580c; }
         .modal-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 14px; text-align: center; box-sizing: border-box; font-family: 'Sarabun'; }
-        .action-btn { width: 100%; padding: 12px; background: #f97316; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: 'Sarabun'; }
+        .action-btn { width: 100%; padding: 12px; background: #f97316; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: 'Sarabun'; margin-top: 10px; }
         .score-number { color: #ea580c; font-size: 45px; font-weight: 800; display: block; margin: 10px 0; }
     </style>
 </head>
@@ -83,6 +82,7 @@
             <div style="font-weight: bold; color: #475569;">คุณได้คะแนนความพยายาม</div>
             <span class="score-number" id="finalScore">0 / 7</span>
             <div id="saveStatus" style="font-size: 14px; color: #ea580c; font-weight: bold; margin-bottom: 15px; display: none;">⏳ กำลังบันทึกคะแนน...</div>
+            <button class="action-btn" id="playAgainBtn" onclick="restartActivity()" style="display:none; background:#10b981;">🔄 เล่นอีกครั้ง</button>
         </div>
     </div>
 
@@ -190,7 +190,10 @@
 
     async function submitScore() {
         let stat = document.getElementById('saveStatus');
+        let playBtn = document.getElementById('playAgainBtn');
         stat.style.display = 'block';
+        playBtn.style.display = 'none'; // ซ่อนปุ่มระหว่างส่งข้อมูล
+
         const payload = { name: studentData.name, room: studentData.room, studentId: "'" + studentData.id, lesson: LESSON_NAME, score: heardCount.size, maxScore: data.length, _t: new Date().getTime() };
         try {
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" } });
@@ -198,6 +201,16 @@
         } catch(e) {
             stat.innerText = '❌ ส่งข้อมูลไม่สำเร็จ'; stat.style.color = '#ef4444';
         }
+        
+        playBtn.style.display = 'block'; // แสดงปุ่มเล่นอีกครั้งเมื่อส่งเสร็จ
+    }
+
+    function restartActivity() {
+        document.getElementById('scoreModal').classList.remove('active');
+        document.getElementById('finalSubmitBtn').style.display = 'none';
+        heardCount.clear();
+        updateScore();
+        loadActivity();
     }
 </script>
 </body>
