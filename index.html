@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ม.1 Unit 3 Let's go in Listen and Repeat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #fff5f5, #fff0f6); font-family: 'Sarabun', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 15px 5px; min-height: 100vh; }
+        
+        .header-container { text-align: center; margin-bottom: 10px; width: 100%; }
+        .welcome-text { font-size: 13px; font-weight: 600; color: #9d174d; background: #ffffff; padding: 6px 12px; border-radius: 50px; display: inline-flex; align-items: center; gap: 10px; border: 2px solid #fbcfe8; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .logout-btn { cursor: pointer; border: none; background: #ef4444; color: white; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-family: 'Sarabun'; font-weight: bold; }
+
+        h2.title { color: #ffffff; background: linear-gradient(135deg, #f97316, #ea580c); padding: 10px 20px; border-radius: 50px; margin: 0 0 15px 0; font-size: 18px; text-align: center; border: 3px solid #fff; width: 95%; max-width: 600px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .app-container { width: 95%; max-width: 600px; background: #ffffff; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 20px; border: 2px solid #fecdd3; text-align: center; }
+        .instruction { font-size: 16px; color: #be185d; font-weight: bold; margin-bottom: 20px; background: #fff1f2; padding: 10px; border-radius: 10px; border: 1px dashed #fb7185; }
+
+        .sentence-item { display: flex; align-items: center; gap: 15px; background: #fff; border: 2px solid #f3f4f6; padding: 12px; border-radius: 15px; margin-bottom: 10px; transition: 0.3s; }
+        .sentence-item.active { border-color: #3b82f6; background: #eff6ff; }
+        .sentence-item.done { border-color: #10b981; background: #f0fdf4; }
+
+        .play-btn { width: 45px; height: 45px; border-radius: 50%; border: none; background: #3b82f6; color: white; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; box-shadow: 0 4px 0 #1d4ed8; }
+        
+        /* ไฮไลท์ปุ่มกดเสียง */
+        .play-btn:hover:not(:disabled) { transform: scale(1.1); background: #2563eb; box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+        .play-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #1d4ed8; }
+        .play-btn.played { background: #10b981; box-shadow: 0 4px 0 #059669; }
+        .play-btn.played:hover { background: #059669; box-shadow: 0 4px 12px rgba(16,185,129,0.4); }
+
+        .text-content { font-size: 17px; font-weight: 600; color: #374151; flex-grow: 1; text-align: left; font-family: 'Poppins', sans-serif; }
+        .status-icon { color: #10b981; font-size: 20px; visibility: hidden; }
+        .sentence-item.done .status-icon { visibility: visible; }
+
+        .score-bar { background: #f8fafc; padding: 15px; border-radius: 15px; border: 2px solid #e2e8f0; font-weight: bold; color: #1e293b; margin-top: 15px; font-size: 16px; }
+        .submit-btn { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 15px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 20px; display: none; width: 100%; font-family: 'Sarabun'; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); transition: 0.3s; }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; visibility: hidden; opacity: 0; transition: 0.3s; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .modal-box { background: white; padding: 25px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; border: 4px solid #ea580c; }
+        .modal-box input { width: 100%; padding: 12px; margin-bottom: 12px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 14px; text-align: center; box-sizing: border-box; font-family: 'Sarabun'; }
+        .action-btn { width: 100%; padding: 12px; background: #f97316; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: 'Sarabun'; }
+        .score-number { color: #ea580c; font-size: 45px; font-weight: 800; display: block; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="header-container" id="welcome-section" style="display: none;">
+        <div class="welcome-text">
+            👤 <span id="show_name"></span> | 🏫 <span id="show_room"></span> | 🆔 <span id="show_id"></span>
+            <button class="logout-btn" onclick="logoutUser()">สลับบัญชี</button>
+        </div>
+    </div>
+
+    <h2 class="title">🎧 ม.1 Unit 3 Let's go in Listen and Repeat</h2>
+
+    <div class="app-container" id="mainArea" style="display: none;">
+        <div class="instruction">🔊 กดฟังเสียงและฝึกออกเสียงตามให้ครบทุกข้อเพื่อบันทึกคะแนน</div>
+        <div id="sentenceContainer"></div>
+        <div class="score-bar">คะแนนความตั้งใจ: <span id="currentScore">0</span> / 7</div>
+        <button class="submit-btn" id="finalSubmitBtn" onclick="finishActivity()">✅ ส่งคะแนนเข้าระบบ</button>
+    </div>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <h2>👋 ลงชื่อก่อนเริ่มกิจกรรม</h2>
+            <input type="text" id="m_name" placeholder="ชื่อ - นามสกุล">
+            <input type="text" id="m_room" placeholder="ชั้น/ห้อง (เช่น 1/1)">
+            <input type="text" id="m_id" placeholder="รหัสนักเรียน (5 หลัก)" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+            <button class="action-btn" onclick="saveUserAndStart()">🚀 เริ่มกิจกรรม</button>
+            <div id="modal-err" style="color:#ef4444; font-size:13px; margin-top:10px; display:none;"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="scoreModal">
+        <div class="modal-box">
+            <h2 style="color:#ea580c;">🎉 ยอดเยี่ยมมาก!</h2>
+            <div style="font-weight: bold; color: #475569;">คุณได้คะแนนความพยายาม</div>
+            <span class="score-number" id="finalScore">0 / 7</span>
+            <div id="saveStatus" style="font-size: 14px; color: #ea580c; font-weight: bold; margin-bottom: 15px; display: none;">⏳ กำลังบันทึกคะแนน...</div>
+        </div>
+    </div>
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxd_UGE1ZY_1dcB3B7l0Vy8azxhuuFoc_kftJ7QZ1Nc4XIaXGKF9RPs8WxhZ0K5VyVN/exec';
+    const LESSON_NAME = "ม.1 Unit 3 Let's go in Listen and Repeat";
+
+    const data = [
+        { text: "Which house is it, Dad?", audio: "audio1.mp3" },
+        { text: "This one. Here we are.", audio: "audio2.mp3" },
+        { text: "Let's go in.", audio: "audio3.mp3" },
+        { text: "The living room is very big.", audio: "audio4.mp3" },
+        { text: "Let's go upstairs.", audio: "audio5.mp3" },
+        { text: "Which is my bedroom?", audio: "audio6.mp3" },
+        { text: "It's great, Dad!", audio: "audio7.mp3" }
+    ];
+
+    let heardCount = new Set();
+    let studentData = { name: "", room: "", id: "" };
+    let currentAudio = new Audio();
+
+    window.onload = () => {
+        document.getElementById('m_room').addEventListener('blur', function() { this.value = autoFormatRoom(this.value); });
+        if(localStorage.getItem('studentName')) {
+            studentData = { name: localStorage.getItem('studentName'), room: localStorage.getItem('studentRoom'), id: localStorage.getItem('studentId') };
+            updateHeader(); loadActivity();
+        } else {
+            document.getElementById('loginModal').classList.add('active');
+        }
+    };
+
+    function autoFormatRoom(val) {
+        let nums = val.trim().match(/\d+/g);
+        if (nums && nums.length >= 2) return `ม.${nums[0]}/${nums[1]}`;
+        if (nums && nums.length === 1) return `ม.${nums[0]}`;
+        return val.trim();
+    }
+
+    function updateHeader() {
+        document.getElementById('show_name').innerText = studentData.name;
+        document.getElementById('show_room').innerText = studentData.room;
+        document.getElementById('show_id').innerText = studentData.id;
+        document.getElementById('welcome-section').style.display = 'block';
+    }
+
+    function saveUserAndStart() {
+        let n = document.getElementById('m_name').value.trim();
+        let r = autoFormatRoom(document.getElementById('m_room').value);
+        let i = document.getElementById('m_id').value.trim();
+        if(!n || !r || i.length !== 5) { document.getElementById('modal-err').style.display='block'; return; }
+        
+        studentData = { name: n, room: r, id: i };
+        localStorage.setItem('studentName', n); localStorage.setItem('studentRoom', r); localStorage.setItem('studentId', i);
+        document.getElementById('loginModal').classList.remove('active');
+        updateHeader(); loadActivity();
+    }
+
+    function logoutUser() {
+        if(confirm("เปลี่ยนชื่อผู้เล่น?")) { localStorage.clear(); location.reload(); }
+    }
+
+    function loadActivity() {
+        document.getElementById('mainArea').style.display = 'block';
+        const container = document.getElementById('sentenceContainer');
+        container.innerHTML = '';
+        data.forEach((item, index) => {
+            container.innerHTML += `
+                <div class="sentence-item" id="item-${index}">
+                    <button class="play-btn" id="btn-${index}" onclick="playSentence(${index})"><i class="fa-solid fa-play"></i></button>
+                    <div class="text-content">${item.text}</div>
+                    <div class="status-icon"><i class="fa-solid fa-circle-check"></i></div>
+                </div>
+            `;
+        });
+    }
+
+    function playSentence(index) {
+        currentAudio.pause();
+        currentAudio.src = data[index].audio;
+        currentAudio.play();
+        
+        document.querySelectorAll('.sentence-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(`item-${index}`).classList.add('active');
+        
+        if(!heardCount.has(index)) {
+            heardCount.add(index);
+            document.getElementById(`item-${index}`).classList.add('done');
+            document.getElementById(`btn-${index}`).classList.add('played');
+            document.getElementById(`btn-${index}`).innerHTML = '<i class="fa-solid fa-rotate-right"></i>';
+            updateScore();
+        }
+    }
+
+    function updateScore() {
+        let score = heardCount.size;
+        document.getElementById('currentScore').innerText = score;
+        if(score === data.length) { document.getElementById('finalSubmitBtn').style.display = 'block'; }
+    }
+
+    function finishActivity() {
+        document.getElementById('finalScore').innerText = `${heardCount.size} / ${data.length}`;
+        document.getElementById('scoreModal').classList.add('active');
+        submitScore();
+    }
+
+    async function submitScore() {
+        let stat = document.getElementById('saveStatus');
+        stat.style.display = 'block';
+        const payload = { name: studentData.name, room: studentData.room, studentId: "'" + studentData.id, lesson: LESSON_NAME, score: heardCount.size, maxScore: data.length, _t: new Date().getTime() };
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" } });
+            stat.innerText = '✅ บันทึกคะแนนสำเร็จ!'; stat.style.color = '#10b981';
+        } catch(e) {
+            stat.innerText = '❌ ส่งข้อมูลไม่สำเร็จ'; stat.style.color = '#ef4444';
+        }
+    }
+</script>
+</body>
+</html>
